@@ -234,7 +234,7 @@ class MathHurdler:
         def evaluate_answer(answer,t1,t2):
             if self.question.is_answer(answer):
                 time_taken=int((round(t2/1000)-round(t1/1000)))
-                self.points += 100 -(time_taken-2)*10
+                self.points += 100 -(time_taken-1)*10
                 self.score_label = self.lg_font.render(str(self.points), 1, Color.BLACK)
                 self.jump_sfx.play()
             else:
