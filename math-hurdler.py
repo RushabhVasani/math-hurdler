@@ -198,7 +198,7 @@ class MathHurdler:
 
         def generate_question():
             self.question.next()
-
+            
             self.buttons[0].set_text(str(self.question.choices[0]))
             self.buttons[1].set_text(str(self.question.choices[1]))
             self.buttons[2].set_text(str(self.question.choices[2]))
@@ -231,9 +231,10 @@ class MathHurdler:
                 self.last_answer_index = -1
             
 
-        def evaluate_answer(answer):
+        def evaluate_answer(answer,t1,t2):
             if self.question.is_answer(answer):
-                self.points += 100
+                time_taken=((int(t2/1000)-int(t1/1000))-2)*10
+                self.points += 100 -time_taken
                 self.score_label = self.lg_font.render(str(self.points), 1, Color.BLACK)
                 self.jump_sfx.play()
             else:
@@ -264,11 +265,12 @@ class MathHurdler:
                                     set_answer,
                                     i
                                 )
+                            self.time_of_clicking=pygame.time.get_ticks()
 
                 screen_size = screen.get_size()
 
                 if not self.paused and not self.gameover:
-
+                    
                     #start at vx=5 and accelerate towards vx=10
                     self.vx = 4 + (self.hurdle_number * 6) / (self.hurdle_number + 5)
                     
@@ -295,7 +297,7 @@ class MathHurdler:
                     if horse.rect.colliderect(hurdle_rect):
                         #evaluate answer on first frame of hurdle collision
                         if not question_dirty:
-                            evaluate_answer(self.last_answer)
+                            evaluate_answer(self.last_answer,self.question_genaration_time,self.time_of_clicking)
                             question_dirty = True
 
                         #if not gameover, jump the hurdle
@@ -306,6 +308,7 @@ class MathHurdler:
 
                     #if not colliding with hurdle and question still dirty, generate new question
                     elif question_dirty:
+                        self.question_genaration_time=pygame.time.get_ticks()
                         generate_question()
                         question_dirty = False
                         set_answer(-1)
